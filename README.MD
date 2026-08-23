@@ -198,4 +198,4 @@ Xem thêm ảnh giao diện chi tiết từng màn hình tại `QuanLyKhachHang/
 
 ![Trang chủ - tìm kiếm nhanh](QuanLyKhachHang/docs/imagess/Screenshot%202026-08-12%20at%2022.01.02.png)
 ![Quản lý khách hàng](QuanLyKhachHang/docs/imagess/Screenshot%202026-08-12%20at%2022.01.29.png)
-![Thống kê](QuanLyKhachHang/docs/imagess/thongKe.png)
+![Thống kê](QuanLyKhachHang/docs/imagess/thongKe.png)# QuanLyNhaThuoc
