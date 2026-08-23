@@ -1,0 +1,362 @@
+[
+  {
+    "MaLo": "L001",
+    "MaThuoc": "T004",
+    "SoLo": "IBU-2708",
+    "HanSuDung": "2027-11-01T00:00:00",
+    "SoLuong": 6,
+    "NgayNhap": "2026-08-10T09:00:00"
+  },
+  {
+    "MaLo": "L002",
+    "MaThuoc": "T021",
+    "SoLo": "AML-2709",
+    "HanSuDung": "2027-12-15T00:00:00",
+    "SoLuong": 8,
+    "NgayNhap": "2026-08-05T09:00:00"
+  },
+  {
+    "MaLo": "L003",
+    "MaThuoc": "T040",
+    "SoLo": "SAL-2707",
+    "HanSuDung": "2027-06-01T00:00:00",
+    "SoLuong": 5,
+    "NgayNhap": "2026-08-15T09:00:00"
+  },
+  {
+    "MaLo": "L004",
+    "MaThuoc": "T002",
+    "SoLo": "AMX-2607",
+    "HanSuDung": "2026-07-15T00:00:00",
+    "SoLuong": 45,
+    "NgayNhap": "2025-08-01T09:00:00"
+  },
+  {
+    "MaLo": "L005",
+    "MaThuoc": "T002",
+    "SoLo": "AMX-2701",
+    "HanSuDung": "2027-10-01T00:00:00",
+    "SoLuong": 120,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L006",
+    "MaThuoc": "T024",
+    "SoLo": "CFX-2608",
+    "HanSuDung": "2026-08-05T00:00:00",
+    "SoLuong": 30,
+    "NgayNhap": "2025-09-10T09:00:00"
+  },
+  {
+    "MaLo": "L007",
+    "MaThuoc": "T024",
+    "SoLo": "CFX-2712",
+    "HanSuDung": "2027-12-20T00:00:00",
+    "SoLuong": 80,
+    "NgayNhap": "2026-06-15T09:00:00"
+  },
+  {
+    "MaLo": "L008",
+    "MaThuoc": "T039",
+    "SoLo": "INS-2608",
+    "HanSuDung": "2026-08-10T00:00:00",
+    "SoLuong": 12,
+    "NgayNhap": "2025-11-01T09:00:00"
+  },
+  {
+    "MaLo": "L009",
+    "MaThuoc": "T039",
+    "SoLo": "INS-2705",
+    "HanSuDung": "2027-05-01T00:00:00",
+    "SoLuong": 40,
+    "NgayNhap": "2026-08-01T09:00:00"
+  },
+  {
+    "MaLo": "L010",
+    "MaThuoc": "T005",
+    "SoLo": "OMZ-2609",
+    "HanSuDung": "2026-09-05T00:00:00",
+    "SoLuong": 25,
+    "NgayNhap": "2026-02-01T09:00:00"
+  },
+  {
+    "MaLo": "L011",
+    "MaThuoc": "T014",
+    "SoLo": "ORS-2609",
+    "HanSuDung": "2026-09-15T00:00:00",
+    "SoLuong": 60,
+    "NgayNhap": "2026-01-15T09:00:00"
+  },
+  {
+    "MaLo": "L012",
+    "MaThuoc": "T028",
+    "SoLo": "PHY-2609",
+    "HanSuDung": "2026-09-10T00:00:00",
+    "SoLuong": 40,
+    "NgayNhap": "2026-02-20T09:00:00"
+  },
+  {
+    "MaLo": "L013",
+    "MaThuoc": "T001",
+    "SoLo": "T001-2026A",
+    "HanSuDung": "2027-06-01T00:00:00",
+    "SoLuong": 300,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L014",
+    "MaThuoc": "T003",
+    "SoLo": "T003-2026A",
+    "HanSuDung": "2027-08-01T00:00:00",
+    "SoLuong": 150,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L015",
+    "MaThuoc": "T006",
+    "SoLo": "T006-2026A",
+    "HanSuDung": "2027-09-01T00:00:00",
+    "SoLuong": 120,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L016",
+    "MaThuoc": "T007",
+    "SoLo": "T007-2026A",
+    "HanSuDung": "2027-07-01T00:00:00",
+    "SoLuong": 80,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L017",
+    "MaThuoc": "T009",
+    "SoLo": "T009-2026A",
+    "HanSuDung": "2027-10-01T00:00:00",
+    "SoLuong": 100,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L018",
+    "MaThuoc": "T010",
+    "SoLo": "T010-2026A",
+    "HanSuDung": "2027-11-01T00:00:00",
+    "SoLuong": 90,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L019",
+    "MaThuoc": "T011",
+    "SoLo": "T011-2026A",
+    "HanSuDung": "2027-12-01T00:00:00",
+    "SoLuong": 110,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L020",
+    "MaThuoc": "T012",
+    "SoLo": "T012-2026A",
+    "HanSuDung": "2027-06-15T00:00:00",
+    "SoLuong": 200,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L021",
+    "MaThuoc": "T013",
+    "SoLo": "T013-2026A",
+    "HanSuDung": "2027-05-01T00:00:00",
+    "SoLuong": 140,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L022",
+    "MaThuoc": "T015",
+    "SoLo": "T015-2026A",
+    "HanSuDung": "2028-01-01T00:00:00",
+    "SoLuong": 60,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L023",
+    "MaThuoc": "T016",
+    "SoLo": "T016-2026A",
+    "HanSuDung": "2028-02-01T00:00:00",
+    "SoLuong": 500,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L024",
+    "MaThuoc": "T017",
+    "SoLo": "T017-2026A",
+    "HanSuDung": "2029-01-01T00:00:00",
+    "SoLuong": 15,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L025",
+    "MaThuoc": "T018",
+    "SoLo": "T018-2026A",
+    "HanSuDung": "2029-01-01T00:00:00",
+    "SoLuong": 25,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L026",
+    "MaThuoc": "T019",
+    "SoLo": "T019-2026A",
+    "HanSuDung": "2028-03-01T00:00:00",
+    "SoLuong": 200,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L027",
+    "MaThuoc": "T020",
+    "SoLo": "T020-2026A",
+    "HanSuDung": "2029-01-01T00:00:00",
+    "SoLuong": 20,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L028",
+    "MaThuoc": "T022",
+    "SoLo": "T022-2026A",
+    "HanSuDung": "2027-09-15T00:00:00",
+    "SoLuong": 130,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L029",
+    "MaThuoc": "T023",
+    "SoLo": "T023-2026A",
+    "HanSuDung": "2027-10-15T00:00:00",
+    "SoLuong": 95,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L030",
+    "MaThuoc": "T025",
+    "SoLo": "T025-2026A",
+    "HanSuDung": "2027-11-15T00:00:00",
+    "SoLuong": 85,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L031",
+    "MaThuoc": "T026",
+    "SoLo": "T026-2026A",
+    "HanSuDung": "2027-06-20T00:00:00",
+    "SoLuong": 150,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L032",
+    "MaThuoc": "T027",
+    "SoLo": "T027-2026A",
+    "HanSuDung": "2028-01-10T00:00:00",
+    "SoLuong": 100,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L033",
+    "MaThuoc": "T029",
+    "SoLo": "T029-2026A",
+    "HanSuDung": "2027-12-05T00:00:00",
+    "SoLuong": 120,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L034",
+    "MaThuoc": "T030",
+    "SoLo": "T030-2026A",
+    "HanSuDung": "2028-02-15T00:00:00",
+    "SoLuong": 90,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L035",
+    "MaThuoc": "T031",
+    "SoLo": "T031-2026A",
+    "HanSuDung": "2027-09-25T00:00:00",
+    "SoLuong": 70,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L036",
+    "MaThuoc": "T032",
+    "SoLo": "T032-2026A",
+    "HanSuDung": "2027-10-25T00:00:00",
+    "SoLuong": 55,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L037",
+    "MaThuoc": "T034",
+    "SoLo": "T034-2026A",
+    "HanSuDung": "2027-11-25T00:00:00",
+    "SoLuong": 60,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L038",
+    "MaThuoc": "T035",
+    "SoLo": "T035-2026A",
+    "HanSuDung": "2027-12-25T00:00:00",
+    "SoLuong": 40,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L039",
+    "MaThuoc": "T036",
+    "SoLo": "T036-2026A",
+    "HanSuDung": "2027-10-01T00:00:00",
+    "SoLuong": 75,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L040",
+    "MaThuoc": "T037",
+    "SoLo": "T037-2026A",
+    "HanSuDung": "2027-09-01T00:00:00",
+    "SoLuong": 110,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L041",
+    "MaThuoc": "T038",
+    "SoLo": "T038-2026A",
+    "HanSuDung": "2027-08-01T00:00:00",
+    "SoLuong": 140,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L042",
+    "MaThuoc": "T041",
+    "SoLo": "T041-2026A",
+    "HanSuDung": "2028-01-01T00:00:00",
+    "SoLuong": 200,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L043",
+    "MaThuoc": "T042",
+    "SoLo": "T042-2026A",
+    "HanSuDung": "2028-01-01T00:00:00",
+    "SoLuong": 250,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L044",
+    "MaThuoc": "T044",
+    "SoLo": "T044-2026A",
+    "HanSuDung": "2027-11-01T00:00:00",
+    "SoLuong": 65,
+    "NgayNhap": "2026-07-01T09:00:00"
+  },
+  {
+    "MaLo": "L045",
+    "MaThuoc": "T045",
+    "SoLo": "T045-2026A",
+    "HanSuDung": "2027-07-01T00:00:00",
+    "SoLuong": 85,
+    "NgayNhap": "2026-07-01T09:00:00"
+  }
+]

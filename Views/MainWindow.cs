@@ -1,0 +1,226 @@
+// Views/MainWindow.cs
+
+using System;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Layout;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
+using QuanLyKhachHang.Services;
+using QuanLyKhachHang.Helpers;
+
+namespace QuanLyKhachHang.Views
+{
+    public class MainWindow : Window
+    {
+        private readonly DataService _data = new();
+        private readonly ContentControl _content = new();
+        private Button? _btnDangChon;
+
+        public MainWindow()
+        {
+            Title = "PHẦN MỀM QUẢN LÍ NHÀ THUỐC";
+            Width = 1200;
+            Height = 720;
+            MinWidth = 1000;
+            MinHeight = 640;
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+            var grid = new Grid();
+            // Thu nhỏ chiều rộng sidebar từ 220 xuống 70 pixel cho giống mẫu
+            grid.ColumnDefinitions.Add(new ColumnDefinition(70, GridUnitType.Pixel));
+            grid.ColumnDefinitions.Add(new ColumnDefinition(1, GridUnitType.Star));
+
+            // ---- Sidebar ----
+            var stackSidebar = new StackPanel
+            {
+                Spacing = 8,
+                Margin = new Thickness(0, 15, 0, 0)
+            };
+
+            // 1. Logo / Avatar tròn ở trên cùng giống ảnh mẫu
+            var borderLogo = new Border
+            {
+                Width = 44,
+                Height = 44,
+                CornerRadius = new CornerRadius(22),
+                Background = AppTheme.Brush(AppTheme.Primary),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 10),
+                Child = new Image
+                {
+                    Source = TaoBitmap("docs/imagess/Home-page.png"),
+                    Width = 22,
+                    Height = 22,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                }
+            };
+
+            // 2. Tạo các nút chỉ chứa icon căn giữa (không có chữ)
+            var btnTrangChu = TaoNutMenuIconOnly("docs/imagess/app.png");
+            var btnKhachHang = TaoNutMenuIconOnly("docs/imagess/khachHang.png");
+            var btnKhoQua = TaoNutMenuIconOnly("docs/imagess/khoQua.png");
+            var btnThuoc = TaoNutMenuIconOnly("docs/imagess/thuoc.png");
+            var btnDonHang = TaoNutMenuIconOnly("docs/imagess/hoaDon.png");
+            var btnThongKe = TaoNutMenuIconOnly("docs/imagess/thongKe.png");
+            var btnThoat = TaoNutMenuIconOnly("docs/imagess/thoat.png");
+
+            // Hàm tạo TrangChuView có hỗ trợ Callback chuyển tab
+            TrangChuView TaoTrangChuView() => new TrangChuView(_data, (tabIndex, maKH) =>
+            {
+                if (tabIndex == 1) // Tab Khách hàng
+                {
+                    HienThi(new KhachHangView(_data), btnKhachHang);
+                }
+                else if (tabIndex == 2) // Tab Đơn hàng / Tích điểm
+                {
+                    var donHangView = new DonHangView(_data);
+                    if (!string.IsNullOrEmpty(maKH))
+                    {
+                        donHangView.ChonKhachHang(maKH);
+                    }
+                    HienThi(donHangView, btnDonHang);
+                }
+            });
+
+            btnTrangChu.Click += (s, e) => HienThi(TaoTrangChuView(), btnTrangChu);
+            btnKhachHang.Click += (s, e) => HienThi(new KhachHangView(_data), btnKhachHang);
+            btnKhoQua.Click += (s, e) => HienThi(new KhoQuaView(_data), btnKhoQua);
+            btnThuoc.Click += (s, e) => HienThi(new ThuocView(_data), btnThuoc);
+            btnDonHang.Click += (s, e) => HienThi(new DonHangView(_data), btnDonHang);
+            btnThongKe.Click += (s, e) => HienThi(new ThongKeView(_data), btnThongKe);
+            btnThoat.Click += (s, e) => Close();
+
+            stackSidebar.Children.Add(borderLogo);
+            stackSidebar.Children.Add(btnTrangChu);
+            stackSidebar.Children.Add(btnKhachHang);
+            stackSidebar.Children.Add(btnKhoQua);
+            stackSidebar.Children.Add(btnThuoc);
+            stackSidebar.Children.Add(btnDonHang);
+            stackSidebar.Children.Add(btnThongKe);
+            stackSidebar.Children.Add(btnThoat);
+
+            var khungSidebar = new Border
+            {
+                Background = AppTheme.Brush(AppTheme.BgSidebar),
+                BorderBrush = AppTheme.Brush(AppTheme.BorderColor),
+                BorderThickness = new Thickness(0, 0, 1, 0),
+                Child = stackSidebar
+            };
+            Grid.SetColumn(khungSidebar, 0);
+
+            // ---- Vùng nội dung ----
+
+            var scrollViewer = new ScrollViewer
+            {
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled, // Tắt cuộn ngang
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,       // Tự hiện thanh cuộn dọc khi nội dung dài
+                Content = _content
+            };
+            var khungNoiDung = new Border
+            {
+                Background = AppTheme.Brush(AppTheme.BgApp),
+                Padding = new Thickness(20),
+                Child = scrollViewer
+            };
+            Grid.SetColumn(khungNoiDung, 1);
+
+            grid.Children.Add(khungSidebar);
+            grid.Children.Add(khungNoiDung);
+            Content = grid;
+
+            // Hiển thị Trang chủ khi ứng dụng vừa khởi chạy
+            HienThi(TaoTrangChuView(), btnTrangChu);
+        }
+
+        // Hàm đọc ảnh thành Bitmap an toàn
+       private Bitmap? TaoBitmap(string relativePath)
+        {
+            try
+            {
+                // Đường dẫn trực tiếp từ thư mục gốc của dự án/bin
+                string fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+                if (System.IO.File.Exists(fullPath))
+                {
+                    return new Bitmap(fullPath);
+                }
+                
+                // Hoặc thử tìm trực tiếp đường dẫn tương đối
+                if (System.IO.File.Exists(relativePath))
+                {
+                    return new Bitmap(relativePath);
+                }
+            }
+            catch { }
+            return null;
+        }
+        // Hàm tạo nút menu dạng hình vuông bo góc, chỉ chứa icon ở chính giữa giống mẫu
+        private Button TaoNutMenuIconOnly(string imagePath)
+        {
+            var iconImg = new Image
+            {
+                Source = TaoBitmap(imagePath),
+                Width = 20,
+                Height = 20,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            var nut = new Button
+            {
+                Content = iconImg,
+                Width = 48,
+                Height = 48,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                Background = Brushes.Transparent,
+                BorderThickness = new Thickness(0),
+                CornerRadius = AppTheme.RadiusMedium, // Bo tròn góc nút bấm đẹp như mẫu
+                Margin = new Thickness(0, 4, 0, 4),
+                Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand)
+            };
+
+            // Nền nút đổi màu mượt (fade) thay vì giật cục khi hover / khi được chọn
+            AppTheme.SmoothBackground(nut);
+
+            // Hiệu ứng hover nhẹ: sáng nền lên một chút khi rê chuột qua, trừ khi đang là nút đang chọn
+            nut.PointerEntered += (s, e) =>
+            {
+                if (nut != _btnDangChon) nut.Background = AppTheme.Brush(AppTheme.PrimaryLight);
+            };
+            nut.PointerExited += (s, e) =>
+            {
+                if (nut != _btnDangChon) nut.Background = Brushes.Transparent;
+            };
+
+            return nut;
+        }
+
+        private void HienThi(UserControl man, Button? nutNguon)
+        {
+            _content.Content = man;
+            AppTheme.FadeIn(man); // Hiệu ứng mờ dần khi chuyển màn hình, thao tác mượt hơn
+            if (nutNguon != null) DanhDauNutDangChon(nutNguon);
+        }
+
+        private void DanhDauNutDangChon(Button nut)
+        {
+            if (_btnDangChon != null)
+                _btnDangChon.Background = Brushes.Transparent;
+
+            // Khi được chọn, nút sẽ chuyển sang màu xanh dương dịu, nổi bật vừa phải
+            nut.Background = AppTheme.Brush(AppTheme.Primary);
+            _btnDangChon = nut;
+        }
+
+
+
+
+
+        
+    }
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "Id": "1",
+    "NoiDung": "Kiểm tra hạn sử dụng sản phẩm",
+    "DaHoanThanh": true,
+    "MauSac": "#F97316"
+  },
+  {
+    "Id": "2",
+    "NoiDung": "Nhập hàng Vitamin C 500mg",
+    "DaHoanThanh": true,
+    "MauSac": "#3B82F6"
+  },
+  {
+    "Id": "3",
+    "NoiDung": "Thanh toán hóa đơn NCC AMC",
+    "DaHoanThanh": false,
+    "MauSac": "#10B981"
+  },
+  {
+    "Id": "4",
+    "NoiDung": "Kiểm kê kho tháng 8",
+    "DaHoanThanh": false,
+    "MauSac": "#8B5CF6"
+  },
+  {
+    "Id": "55007ffb-0a34-4034-b827-0710a50cb36c",
+    "NoiDung": "nhập hàng",
+    "DaHoanThanh": false,
+    "MauSac": "#2563EB"
+  }
+]
