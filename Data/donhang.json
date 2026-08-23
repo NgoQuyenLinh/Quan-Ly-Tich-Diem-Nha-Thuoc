@@ -23,7 +23,8 @@
       }
     ],
     "QuaTangDoi": "Khẩu trang",
-    "DiemDoiQua": 100
+    "DiemDoiQua": 100,
+    "GhiChu": "Khách mua theo đơn bác sĩ"
   },
   {
     "MaDon": "DH002",

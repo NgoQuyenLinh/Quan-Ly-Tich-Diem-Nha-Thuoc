@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Layout;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using QuanLyKhachHang.Helpers;
 using QuanLyKhachHang.Models;
 using QuanLyKhachHang.Services;
@@ -104,7 +107,7 @@ namespace QuanLyKhachHang.Views
             });
 
             // ================= TOP QUÀ =================
-            var topCard = Card("🎁  Top quà đã phát / tặng nhiều nhất");
+            var topCard = Card(TaoHeaderIcon("docs/imagess/gift_icon.png", "Top quà đã phát / tặng nhiều nhất"));
             var topStack = new StackPanel { Spacing = 10 };
 
             // Dùng chung cách tạo hàng RadioButton cho các bộ lọc/sắp xếp.
@@ -157,11 +160,39 @@ namespace QuanLyKhachHang.Views
             _rbLichSuThang.IsCheckedChanged += (_, _) => TaiLaiDuLieuDon();
             _rbLichSuNam.IsCheckedChanged += (_, _) => TaiLaiDuLieuDon();
 
+            // Nút Xóa đơn đã chọn có kèm icon png bên trái
+            var stackXoa = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Spacing = 6,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var bmpTrash = TaoBitmap("docs/imagess/trash_icon.png");
+            if (bmpTrash != null)
+            {
+                stackXoa.Children.Add(new Image
+                {
+                    Source = bmpTrash,
+                    Width = 16,
+                    Height = 16,
+                    VerticalAlignment = VerticalAlignment.Center
+                });
+            }
+            stackXoa.Children.Add(new TextBlock
+            {
+                Text = "Xóa đơn đã chọn",
+                Foreground = Brushes.White,
+                FontWeight = FontWeight.SemiBold,
+                VerticalAlignment = VerticalAlignment.Center
+            });
+
             var btnXoaDon = new Button
             {
-                Content = "🗑 Xóa đơn đã chọn",
+                Content = stackXoa,
                 Background = new SolidColorBrush(Color.Parse("#E4574C")),
-                Foreground = Brushes.White,
+                Padding = new Thickness(12, 6),
+                CornerRadius = new CornerRadius(6),
+                Cursor = new Cursor(StandardCursorType.Hand),
                 HorizontalAlignment = HorizontalAlignment.Right
             };
             btnXoaDon.Click += BtnXoaDon_Click;
@@ -174,18 +205,22 @@ namespace QuanLyKhachHang.Views
             _listBoxDon.SelectionChanged += (_, _) =>
                 _donDangChon = _listBoxDon.SelectedItem as DonHang;
 
+            // Nhấn đúp chuột vào đơn hàng để xem chi tiết hoá đơn
+            _listBoxDon.DoubleTapped += ListBoxDon_DoubleTapped;
+
             var gridBang = new Grid();
             var bang = UiHelpers.TaoBang<DonHang>(
                 new List<DonHang>(),
                 new List<ColDef<DonHang>>
                 {
                     new("Mã đơn", 0.8, d => d.MaDon),
-                    new("Khách hàng", 1.5, d => d.TenKH),
-                    new("Tổng tiền", 1.1, d => $"{d.SoTien:N0} đ"),
-                    new("Điểm cộng", 0.9, d => d.DiemCong.ToString()),
-                    new("Quà đã đổi", 1.3, d => string.IsNullOrEmpty(d.QuaTangDoi) ? "-" : d.QuaTangDoi),
-                    new("Điểm dùng", 0.9, d => d.DiemSuDung.ToString()),
-                    new("Ngày tạo", 1.3, d => d.NgayTao.ToString("dd/MM/yyyy HH:mm"))
+                    new("Khách hàng", 1.4, d => d.TenKH),
+                    new("Tổng tiền", 1.0, d => $"{d.SoTien:N0} đ"),
+                    new("Điểm cộng", 0.8, d => d.DiemCong.ToString()),
+                    new("Quà đã đổi", 1.1, d => string.IsNullOrEmpty(d.QuaTangDoi) ? "-" : d.QuaTangDoi),
+                    new("Điểm dùng", 0.8, d => d.DiemSuDung.ToString()),
+                    new("Ghi chú", 1.2, d => string.IsNullOrEmpty(d.GhiChu) ? "-" : d.GhiChu),
+                    new("Ngày tạo", 1.2, d => d.NgayTao.ToString("dd/MM/yyyy HH:mm"))
                 },
                 _listBoxDon);
 
@@ -214,6 +249,48 @@ namespace QuanLyKhachHang.Views
             TaiLaiDuLieuDon();
         }
 
+        private static Bitmap? TaoBitmap(string duongDan)
+        {
+            try
+            {
+                string pathFull = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, duongDan);
+                if (File.Exists(pathFull)) return new Bitmap(pathFull);
+                if (File.Exists(duongDan)) return new Bitmap(duongDan);
+            }
+            catch { }
+            return null;
+        }
+
+        private static StackPanel TaoHeaderIcon(string imagePath, string title, double fontSize = 16)
+        {
+            var stack = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Spacing = 8,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var bmp = TaoBitmap(imagePath);
+            if (bmp != null)
+            {
+                stack.Children.Add(new Image
+                {
+                    Source = bmp,
+                    Width = fontSize * 1.25,
+                    Height = fontSize * 1.25,
+                    VerticalAlignment = VerticalAlignment.Center
+                });
+            }
+            stack.Children.Add(new TextBlock
+            {
+                Text = title,
+                FontSize = fontSize,
+                FontWeight = FontWeight.Bold,
+                Foreground = new SolidColorBrush(Color.Parse("#2C4870")),
+                VerticalAlignment = VerticalAlignment.Center
+            });
+            return stack;
+        }
+
         private StackPanel TaoHangRadio(string nhan, params RadioButton[] radioButtons)
         {
             var hang = new StackPanel
@@ -237,7 +314,7 @@ namespace QuanLyKhachHang.Views
             return hang;
         }
 
-        private Border Card(string title)
+        private Border Card(Control headerControl)
         {
             var card = new Border
             {
@@ -249,72 +326,125 @@ namespace QuanLyKhachHang.Views
             };
 
             var stack = new StackPanel { Spacing = 8 };
-            stack.Children.Add(new TextBlock
+            stack.Children.Add(headerControl);
+            card.Child = stack;
+            return card;
+        }
+
+        private Border Card(string title)
+        {
+            return Card(new TextBlock
             {
                 Text = title,
                 FontSize = 16,
                 FontWeight = FontWeight.Bold,
                 Foreground = new SolidColorBrush(Color.Parse("#2C4870"))
             });
-            card.Child = stack;
-            return card;
         }
 
-        private void CapNhatTopQua()
+        private async void ListBoxDon_DoubleTapped(object? sender, TappedEventArgs e)
         {
-            DateTime hienTai = DateTime.Now;
-            DateTime tu;
-            DateTime den;
-
-            if (_rbThang.IsChecked == true)
+            if (_listBoxDon.SelectedItem is DonHang don)
             {
-                tu = new DateTime(hienTai.Year, hienTai.Month, 1);
-                den = tu.AddMonths(1).AddTicks(-1);
+               var win = new HoaDonChiTietWindow(don, _data);
+                if (TopLevel.GetTopLevel(this) is Window parent)
+                    await win.ShowDialog(parent);
+                else
+                    win.Show();
             }
-            else if (_rbNam.IsChecked == true)
-            {
-                tu = new DateTime(hienTai.Year, 1, 1);
-                den = tu.AddYears(1).AddTicks(-1);
-            }
-            else
-            {
-                tu = hienTai.Date;
-                den = tu.AddDays(1).AddTicks(-1);
-            }
-
-            var topQua = _data.DanhSachDonHang
-                .Where(d => d.NgayTao >= tu && d.NgayTao <= den && !string.IsNullOrEmpty(d.QuaTangDoi))
-                .GroupBy(d => d.QuaTangDoi)
-                .Select(g => new
-                {
-                    TenQua = g.Key,
-                    SoLan = g.Count(),
-                    TongDiem = g.Sum(d => d.DiemDoiQua)
-                })
-                .OrderByDescending(x => x.SoLan)
-                .ThenByDescending(x => x.TongDiem)
-                .Take(10)
-                .ToList();
-
-            var ketQua = new List<QuaXepHang>();
-            for (int i = 0; i < topQua.Count; i++)
-            {
-                var x = topQua[i];
-                var maQua = _data.DanhSachQuaTang
-                    .FirstOrDefault(q => q.TenQua == x.TenQua)?.MaQua ?? "-";
-
-                ketQua.Add(new QuaXepHang(
-                    i + 1,
-                    maQua,
-                    x.TenQua ?? "-",
-                    x.SoLan,
-                    x.TongDiem));
-            }
-
-            _listBoxTopQua.ItemsSource = null;
-            _listBoxTopQua.ItemsSource = ketQua;
         }
 
+      private void CapNhatTopQua()
+{
+    DateTime hienTai = DateTime.Now;
+    DateTime tu;
+    DateTime den;
+
+    if (_rbThang.IsChecked == true)
+    {
+        tu = new DateTime(hienTai.Year, hienTai.Month, 1);
+        den = tu.AddMonths(1).AddTicks(-1);
+    }
+    else if (_rbNam.IsChecked == true)
+    {
+        tu = new DateTime(hienTai.Year, 1, 1);
+        den = tu.AddYears(1).AddTicks(-1);
+    }
+    else
+    {
+        tu = hienTai.Date;
+        den = tu.AddDays(1).AddTicks(-1);
+    }
+
+    // Lấy các đơn hàng trong khoảng thời gian
+    var danhSachDon = _data.DanhSachDonHang
+        .Where(d =>
+            d.NgayTao >= tu &&
+            d.NgayTao <= den &&
+            !string.IsNullOrWhiteSpace(d.QuaTangDoi))
+        .ToList();
+
+    // Thống kê quà theo TÊN QUÀ
+    var topQua = danhSachDon
+        .SelectMany(d =>
+            d.QuaTangDoi!
+                .Split(
+                    new[] { ',', ';' },
+                    StringSplitOptions.RemoveEmptyEntries)
+                .Select(q => q.Trim()))
+        .GroupBy(q => q, StringComparer.OrdinalIgnoreCase)
+        .Select(g => new
+        {
+            TenQua = g.First(),
+            SoLan = g.Count()
+        })
+        .OrderByDescending(x => x.SoLan)
+        .Take(10)
+        .ToList();
+
+    var ketQua = new List<QuaXepHang>();
+
+    for (int i = 0; i < topQua.Count; i++)
+    {
+        var x = topQua[i];
+
+        // Tìm quà tương ứng trong danh sách quà
+        var qua = _data.DanhSachQuaTang
+            .FirstOrDefault(q =>
+                !string.IsNullOrWhiteSpace(q.TenQua) &&
+                string.Equals(
+                    q.TenQua.Trim(),
+                    x.TenQua.Trim(),
+                    StringComparison.OrdinalIgnoreCase));
+
+        string maQua = qua?.MaQua ?? "-";
+
+        // Tính tổng điểm đổi của quà này
+        int tongDiem = danhSachDon
+            .Where(d =>
+                !string.IsNullOrWhiteSpace(d.QuaTangDoi) &&
+                d.QuaTangDoi
+                    .Split(
+                        new[] { ',', ';' },
+                        StringSplitOptions.RemoveEmptyEntries)
+                    .Any(q =>
+                        string.Equals(
+                            q.Trim(),
+                            x.TenQua.Trim(),
+                            StringComparison.OrdinalIgnoreCase)))
+            .Sum(d => d.DiemDoiQua);
+
+        ketQua.Add(new QuaXepHang(
+            i + 1,
+            maQua,
+            x.TenQua,
+            x.SoLan,
+            tongDiem));
+    }
+
+    _listBoxTopQua.ItemsSource = null;
+    _listBoxTopQua.ItemsSource = ketQua;
+}
         private void TaiLaiDuLieuDon()
         {
             // Lọc lịch sử mua hàng theo đúng kỳ Ngày / Tháng / Năm như Top quà.

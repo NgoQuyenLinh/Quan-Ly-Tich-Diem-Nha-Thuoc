@@ -23,7 +23,7 @@ namespace QuanLyKhachHang.Views
 
         public KhachHang? KetQua { get; private set; }
 
-        public KhachHangEditWindow(string maKHMoi, KhachHang? khDangSua = null)
+        public KhachHangEditWindow(string maKHMoi, KhachHang? khDangSua = null, string? sdtMacDinh = null)
         {
             _laSua = khDangSua != null;
             _ngayTaoGoc = _laSua ? khDangSua!.NgayTao : DateTime.Now;
@@ -36,7 +36,7 @@ namespace QuanLyKhachHang.Views
 
             _txtMaKH.Text = _laSua ? khDangSua!.MaKH : maKHMoi;
             _txtHoTen.Text = _laSua ? khDangSua!.HoTen : string.Empty;
-            _txtSoDienThoai.Text = _laSua ? khDangSua!.SoDienThoai : string.Empty;
+            _txtSoDienThoai.Text = _laSua ? khDangSua!.SoDienThoai : (sdtMacDinh ?? string.Empty);
             _numDiem.Value = _laSua ? khDangSua!.DiemTichLuy : 0;
 
             var form = new StackPanel { Margin = new Thickness(20), Spacing = 14 };
@@ -88,9 +88,16 @@ namespace QuanLyKhachHang.Views
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(_txtSoDienThoai.Text))
+            var sdt = _txtSoDienThoai.Text?.Trim() ?? "";
+            if (string.IsNullOrWhiteSpace(sdt))
             {
                 await ThongBaoWindow.ThongBao(this, "Thiếu thông tin", "Vui lòng nhập số điện thoại.");
+                return;
+            }
+
+            if (sdt.Length != 10 || !sdt.All(char.IsDigit) || !sdt.StartsWith("0"))
+            {
+                await ThongBaoWindow.ThongBao(this, "Số điện thoại không hợp lệ", "Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0 (Ví dụ: 0912345678).");
                 return;
             }
 
@@ -98,7 +105,7 @@ namespace QuanLyKhachHang.Views
             {
                 MaKH = _txtMaKH.Text ?? string.Empty,
                 HoTen = _txtHoTen.Text!.Trim(),
-                SoDienThoai = _txtSoDienThoai.Text!.Trim(),
+                SoDienThoai = sdt,
                 DiemTichLuy = (int)(_numDiem.Value ?? 0),
                 NgayTao = _ngayTaoGoc
             };

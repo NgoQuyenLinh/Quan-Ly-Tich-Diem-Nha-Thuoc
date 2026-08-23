@@ -30,6 +30,7 @@ namespace QuanLyKhachHang.Models
         public int TongDiemSauGiaoDich { get; set; }
         public string QuaTangDoi { get; set; } = string.Empty;
         public int DiemDoiQua { get; set; }
+        public string GhiChu { get; set; } = string.Empty;
 
         /// <summary>Số tiền thực khách phải trả sau khi trừ điểm sử dụng để giảm giá (100 điểm = 1.000đ).</summary>
         public decimal ThanhTien => SoTien - (DiemSuDung * 1000m / 100m);

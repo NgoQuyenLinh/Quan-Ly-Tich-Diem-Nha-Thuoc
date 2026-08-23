@@ -16,9 +16,8 @@ namespace QuanLyKhachHang.Views
     /// Màn hình Quản lý Kho Quà - bố cục:
     ///  - Trái  : "🗓️ Quà trong tháng" -> quà có NgayTao thuộc tháng/năm hiện tại (chỉ để xem).
     ///  - Phải  : "🔁 Trạng thái tặng quà" -> TabControl 2 tab "Chưa tặng" / "Đang tặng" dựa trên
-    ///            cờ thủ công QuaTang.DangBan. Người dùng chọn 1 quà rồi bấm nút chuyển để
-    ///            đẩy quà đó qua lại giữa 2 trạng thái bất cứ lúc nào. Quà đã hết hàng
-    ///            (SoLuong &lt;= 0) sẽ tự động không còn nằm ở 2 tab này nữa.
+    ///            cờ thủ công QuaTang.DangBan. Người dùng chọn 1 hoặc nhiều quà (giữ Ctrl / Shift)
+    ///            rồi bấm nút chuyển để đổi trạng thái hàng loạt.
     ///  - Dưới  : "🔴 Đã tặng hết" -> khu vực riêng cho quà hết hàng (SoLuong &lt;= 0),
     ///            tách khỏi 2 trạng thái Chưa tặng / Đang tặng để dễ nhận biết cần nhập thêm.
     /// Nút Thêm / Sửa / Xoá dùng chung, thao tác trên quà đang được chọn ở BẤT KỲ bảng nào.
@@ -32,10 +31,10 @@ namespace QuanLyKhachHang.Views
         private readonly TextBox _txtTimDangBan = new() { Width = 220, Watermark = "Tìm quà đang tặng..." };
         private readonly TextBox _txtTimHetHang = new() { Width = 260, Watermark = "Tìm quà đã hết hàng..." };
 
-        private readonly ListBox _listBoxThang = new();
-        private readonly ListBox _listBoxChuaBan = new();
-        private readonly ListBox _listBoxDangBan = new();
-        private readonly ListBox _listBoxHetHang = new();
+        private readonly ListBox _listBoxThang = new() { SelectionMode = SelectionMode.Multiple };
+        private readonly ListBox _listBoxChuaBan = new() { SelectionMode = SelectionMode.Multiple };
+        private readonly ListBox _listBoxDangBan = new() { SelectionMode = SelectionMode.Multiple };
+        private readonly ListBox _listBoxHetHang = new() { SelectionMode = SelectionMode.Multiple };
 
         private readonly TextBlock _lblDangChon = new() { FontSize = 12, Foreground = Brushes.DimGray };
 
@@ -58,6 +57,7 @@ namespace QuanLyKhachHang.Views
         };
 
         private QuaTang? _dangChon;
+        private List<QuaTang> _danhSachDangChon = new();
         private bool _dangDongBoChon; // cờ chống vòng lặp khi tự xoá lựa chọn ở bảng còn lại
 
         /// <summary>
@@ -131,13 +131,13 @@ namespace QuanLyKhachHang.Views
             _listBoxDangBan.SelectionChanged += (s, e) => ChonTu(_listBoxDangBan, _listBoxThang, _listBoxChuaBan, _listBoxHetHang);
             _listBoxHetHang.SelectionChanged += (s, e) => ChonTu(_listBoxHetHang, _listBoxThang, _listBoxChuaBan, _listBoxDangBan);
 
-            _listBoxThang.DoubleTapped += (s, e) => { if (_dangChon != null) _ = HienThiPopup(_dangChon, isMoi: false); };
-            _listBoxChuaBan.DoubleTapped += (s, e) => { if (_dangChon != null) _ = HienThiPopup(_dangChon, isMoi: false); };
-            _listBoxDangBan.DoubleTapped += (s, e) => { if (_dangChon != null) _ = HienThiPopup(_dangChon, isMoi: false); };
-            _listBoxHetHang.DoubleTapped += (s, e) => { if (_dangChon != null) _ = HienThiPopup(_dangChon, isMoi: false); };
+            _listBoxThang.DoubleTapped += (s, e) => { var q = _danhSachDangChon.LastOrDefault() ?? _dangChon; if (q != null) _ = HienThiPopup(q, isMoi: false); };
+            _listBoxChuaBan.DoubleTapped += (s, e) => { var q = _danhSachDangChon.LastOrDefault() ?? _dangChon; if (q != null) _ = HienThiPopup(q, isMoi: false); };
+            _listBoxDangBan.DoubleTapped += (s, e) => { var q = _danhSachDangChon.LastOrDefault() ?? _dangChon; if (q != null) _ = HienThiPopup(q, isMoi: false); };
+            _listBoxHetHang.DoubleTapped += (s, e) => { var q = _danhSachDangChon.LastOrDefault() ?? _dangChon; if (q != null) _ = HienThiPopup(q, isMoi: false); };
 
-            _btnChuyenSangDangBan.Click += (s, e) => ChuyenTrangThai();
-            _btnChuyenVeChuaBan.Click += (s, e) => ChuyenTrangThai();
+            _btnChuyenSangDangBan.Click += (s, e) => ChuyenTrangThai(_listBoxChuaBan);
+            _btnChuyenVeChuaBan.Click += (s, e) => ChuyenTrangThai(_listBoxDangBan);
 
             Content = goc;
             TaiLaiDuLieu();
@@ -250,31 +250,60 @@ namespace QuanLyKhachHang.Views
             };
         }
 
-        /// <summary>Khi chọn 1 dòng ở bảng này, bỏ chọn ở 2 bảng kia để tránh nhầm lẫn "đang chọn quà nào".</summary>
+        /// <summary>Khi chọn dòng ở bảng này, đồng bộ danh sách chọn và bỏ chọn ở các bảng còn lại.</summary>
         private void ChonTu(ListBox nguon, params ListBox[] conLai)
         {
             if (_dangDongBoChon) return;
 
-            var quaChon = nguon.SelectedItem as QuaTang;
-            if (quaChon == null) return;
+            var danhSach = nguon.SelectedItems?.OfType<QuaTang>().ToList() ?? new List<QuaTang>();
+            if (danhSach.Count == 0 && nguon.SelectedItem is QuaTang qSingle)
+            {
+                danhSach.Add(qSingle);
+            }
+
+            if (danhSach.Count == 0) return;
 
             _dangDongBoChon = true;
-            foreach (var lb in conLai) lb.SelectedItem = null;
+            foreach (var lb in conLai)
+            {
+                lb.SelectedItems?.Clear();
+                lb.SelectedItem = null;
+            }
             _dangDongBoChon = false;
 
-            _dangChon = quaChon;
-            _lblDangChon.Text = $"Đang chọn: {quaChon.TenQua} (Mã {quaChon.MaQua}) — {TrangThaiText(quaChon)}";
+            _danhSachDangChon = danhSach;
+            _dangChon = danhSach.LastOrDefault();
+
+            if (danhSach.Count == 1)
+            {
+                var quaChon = danhSach[0];
+                _lblDangChon.Text = $"Đang chọn: {quaChon.TenQua} (Mã {quaChon.MaQua}) — {TrangThaiText(quaChon)}";
+            }
+            else
+            {
+                _lblDangChon.Text = $"Đang chọn: {danhSach.Count} món quà (có thể chuyển trạng thái hoặc xoá đồng loạt)";
+            }
         }
 
-        private async void ChuyenTrangThai()
+        private async void ChuyenTrangThai(ListBox? nguon = null)
         {
-            if (_dangChon == null)
+            var dsChon = nguon?.SelectedItems?.OfType<QuaTang>().ToList();
+            if (dsChon == null || dsChon.Count == 0)
             {
-                await ThongBaoWindow.ThongBao(TopLevel.GetTopLevel(this) as Window, "Thông báo", "Vui lòng chọn 1 quà tặng cần chuyển trạng thái.");
+                dsChon = _danhSachDangChon.Count > 0 ? _danhSachDangChon : (_dangChon != null ? new List<QuaTang> { _dangChon } : new List<QuaTang>());
+            }
+
+            if (dsChon.Count == 0)
+            {
+                await ThongBaoWindow.ThongBao(TopLevel.GetTopLevel(this) as Window, "Thông báo", "Vui lòng chọn ít nhất 1 quà tặng cần chuyển trạng thái (có thể giữ Ctrl / Shift để chọn nhiều món).");
                 return;
             }
 
-            _data.ChuyenTrangThaiQuaTang(_dangChon.MaQua);
+            foreach (var qua in dsChon)
+            {
+                _data.ChuyenTrangThaiQuaTang(qua.MaQua);
+            }
+
             TaiLaiDuLieu();
         }
 
@@ -292,7 +321,10 @@ namespace QuanLyKhachHang.Views
                 if (quaMoi != null)
                 {
                     _dangChon = quaMoi;
-                    _lblDangChon.Text = $"Đang chọn: {quaMoi.TenQua} (Mã {quaMoi.MaQua}) — {TrangThaiText(quaMoi)}";
+                    if (_danhSachDangChon.Count <= 1)
+                    {
+                        _lblDangChon.Text = $"Đang chọn: {quaMoi.TenQua} (Mã {quaMoi.MaQua}) — {TrangThaiText(quaMoi)}";
+                    }
                 }
             }
         }
@@ -304,29 +336,40 @@ namespace QuanLyKhachHang.Views
 
         private async void BtnSua_Click(object? sender, RoutedEventArgs e)
         {
-            if (_dangChon == null)
+            var qua = _danhSachDangChon.LastOrDefault() ?? _dangChon;
+            if (qua == null)
             {
                 await ThongBaoWindow.ThongBao(TopLevel.GetTopLevel(this) as Window, "Thông báo", "Vui lòng chọn 1 quà tặng cần sửa.");
                 return;
             }
-            await HienThiPopup(_dangChon, isMoi: false);
+            await HienThiPopup(qua, isMoi: false);
         }
 
         private async void BtnXoa_Click(object? sender, RoutedEventArgs e)
         {
             var cuaSoCha = TopLevel.GetTopLevel(this) as Window;
 
-            if (_dangChon == null)
+            var dsXoa = _danhSachDangChon.Count > 0 ? _danhSachDangChon : (_dangChon != null ? new List<QuaTang> { _dangChon } : new List<QuaTang>());
+
+            if (dsXoa.Count == 0)
             {
-                await ThongBaoWindow.ThongBao(cuaSoCha, "Thông báo", "Vui lòng chọn 1 quà tặng cần xoá.");
+                await ThongBaoWindow.ThongBao(cuaSoCha, "Thông báo", "Vui lòng chọn quà tặng cần xoá.");
                 return;
             }
 
-            bool dongY = await ThongBaoWindow.XacNhan(cuaSoCha, "Xác nhận xoá", $"Bạn có chắc muốn xoá quà \n'{_dangChon.TenQua}'?");
+            string thongBao = dsXoa.Count == 1
+                ? $"Bạn có chắc muốn xoá quà \n'{dsXoa[0].TenQua}'?"
+                : $"Bạn có chắc muốn xoá {dsXoa.Count} món quà tặng đã chọn?";
+
+            bool dongY = await ThongBaoWindow.XacNhan(cuaSoCha, "Xác nhận xoá", thongBao);
             if (dongY)
             {
-                _data.XoaQuaTang(_dangChon.MaQua);
+                foreach (var q in dsXoa)
+                {
+                    _data.XoaQuaTang(q.MaQua);
+                }
                 _dangChon = null;
+                _danhSachDangChon.Clear();
                 _lblDangChon.Text = "Chưa chọn quà nào.";
                 TaiLaiDuLieu();
             }

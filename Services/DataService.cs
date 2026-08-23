@@ -1078,7 +1078,8 @@ namespace QuanLyKhachHang.Services
             string maKH,
             List<ChiTietDonHang> danhSachThuoc,
             int diemSuDung,
-            List<QuaTang>? danhSachQua = null)
+            List<QuaTang>? danhSachQua = null,
+            string ghiChu = "")
         {
             danhSachQua ??= new List<QuaTang>();
 
@@ -1292,49 +1293,53 @@ namespace QuanLyKhachHang.Services
             }
 
 
-            var don =
-                new DonHang
-                {
-                    MaDon =
-                        TaoMaDonHangMoi(),
+         var don =
+    new DonHang
+    {
+        MaDon =
+            TaoMaDonHangMoi(),
 
-                    MaKH =
-                        kh.MaKH,
+        MaKH =
+            kh.MaKH,
 
-                    TenKH =
-                        kh.HoTen,
+        TenKH =
+            kh.HoTen,
 
-                    DanhSachThuoc =
-                        danhSachThuoc,
+        DanhSachThuoc =
+            danhSachThuoc,
 
-                    SoTien =
-                        soTien,
+        SoTien =
+            soTien,
 
-                    NgayTao =
-                        DateTime.Now,
+        NgayTao =
+            DateTime.Now,
 
-                    DiemCong =
-                        diemCong,
+        DiemCong =
+            diemCong,
 
-                    DiemSuDung =
-                        diemSuDung,
+        DiemSuDung =
+            diemSuDung,
 
-                    QuaTangDoi =
-                        danhSachQua.Count == 0
-                        ? string.Empty
-                        : string.Join(
-                            ", ",
-                            danhSachQua.Select(q => q.TenQua)
-                        ),
+        // Chỉ lưu TÊN quà vào đơn hàng
+        QuaTangDoi =
+            danhSachQua.Count == 0
+                ? string.Empty
+                : string.Join(
+                    ", ",
+                    danhSachQua.Select(q => q.TenQua)
+                ),
 
-                    DiemDoiQua =
-                        danhSachQua.Sum(
-                            q => q.DiemQuyDoi
-                        ),
+        DiemDoiQua =
+            danhSachQua.Sum(
+                q => q.DiemQuyDoi
+            ),
 
-                    TongDiemSauGiaoDich =
-                        kh.DiemTichLuy
-                };
+        TongDiemSauGiaoDich =
+            kh.DiemTichLuy,
+
+        GhiChu =
+            ghiChu
+    };
 
 
             DanhSachDonHang.Add(don);

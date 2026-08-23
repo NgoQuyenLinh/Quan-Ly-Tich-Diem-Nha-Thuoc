@@ -7,101 +7,211 @@ using Avalonia.Media;
 namespace QuanLyKhachHang.Views
 {
     /// <summary>
-    /// Avalonia không có sẵn MessageBox như WinForms, nên đây là 1 cửa sổ popup nhỏ
-    /// dùng chung cho 2 việc: (1) hiển thị thông báo (nút OK), (2) hỏi xác nhận (Có/Không).
+    /// Cửa sổ thông báo dùng chung:
+    /// - Thông báo: 1 nút OK
+    /// - Xác nhận: 2 nút Không / Có
     /// </summary>
     public class ThongBaoWindow : Window
     {
         private bool _ketQua;
 
-        private ThongBaoWindow(string tieuDe, string noiDung, bool coHaiNut)
+        private ThongBaoWindow(
+            string tieuDe,
+            string noiDung,
+            bool coHaiNut)
         {
             Title = tieuDe;
+
             Width = 420;
-            SizeToContent = SizeToContent.Height;
+            MinHeight = 170;
+            MaxWidth = 520;
+
             CanResize = false;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+            // =====================================================
+            // NỘI DUNG
+            // =====================================================
 
             var lblNoiDung = new TextBlock
             {
                 Text = noiDung,
                 TextWrapping = TextWrapping.Wrap,
-                Margin = new Thickness(24, 24, 24, 10),
-                FontSize = 13
+                FontSize = 13,
+                Margin = new Thickness(24, 24, 24, 18)
             };
+
+            // =====================================================
+            // KHU VỰC NÚT
+            // =====================================================
 
             var panelNut = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 HorizontalAlignment = HorizontalAlignment.Right,
-                Margin = new Thickness(0, 10, 20, 20),
-                Spacing = 10
+                Spacing = 10,
+                Margin = new Thickness(24, 0, 24, 20)
             };
 
             if (coHaiNut)
             {
-                var btnKhong = new Button { Content = "Không", Width = 90 };
-                btnKhong.Click += (s, e) => { _ketQua = false; Close(); };
+                // =========================
+                // NÚT KHÔNG
+                // =========================
+
+                var btnKhong = new Button
+                {
+                    Content = "Không",
+                    Width = 90,
+                    Height = 36,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+
+                btnKhong.Click += (_, _) =>
+                {
+                    _ketQua = false;
+                    Close();
+                };
+
+                // =========================
+                // NÚT CÓ
+                // =========================
 
                 var btnCo = new Button
                 {
                     Content = "Có",
                     Width = 90,
-                    Background = new SolidColorBrush(Color.Parse("#5B8EF2")),
+                    Height = 36,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Background = new SolidColorBrush(
+                        Color.Parse("#5B8EF2")
+                    ),
                     Foreground = Brushes.White
                 };
-                btnCo.Click += (s, e) => { _ketQua = true; Close(); };
+
+                btnCo.Click += (_, _) =>
+                {
+                    _ketQua = true;
+                    Close();
+                };
 
                 panelNut.Children.Add(btnKhong);
                 panelNut.Children.Add(btnCo);
             }
             else
             {
+                // =========================
+                // NÚT OK
+                // =========================
+
                 var btnOk = new Button
                 {
                     Content = "OK",
                     Width = 90,
-                    Background = new SolidColorBrush(Color.Parse("#5B8EF2")),
+                    Height = 36,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Background = new SolidColorBrush(
+                        Color.Parse("#5B8EF2")
+                    ),
                     Foreground = Brushes.White
                 };
-                btnOk.Click += (s, e) => { _ketQua = true; Close(); };
+
+                btnOk.Click += (_, _) =>
+                {
+                    _ketQua = true;
+                    Close();
+                };
+
                 panelNut.Children.Add(btnOk);
             }
 
-            Content = new DockPanel
+            // =====================================================
+            // GIAO DIỆN CHÍNH
+            // Không dùng DockPanel để tránh lỗi phần nút
+            // bị khuất khi SizeToContent.
+            // =====================================================
+
+            var root = new StackPanel
             {
-                Children =
-                {
-                    lblNoiDung,
-                    panelNut
-                }
+                Orientation = Orientation.Vertical,
+                Spacing = 0
             };
-            DockPanel.SetDock(panelNut, Dock.Bottom);
+
+            root.Children.Add(lblNoiDung);
+            root.Children.Add(panelNut);
+
+            Content = root;
+
+            // Tự điều chỉnh chiều cao theo nội dung
+            SizeToContent = SizeToContent.Height;
         }
 
-        /// <summary>Hiển thị thông báo đơn giản, chỉ có nút OK.</summary>
-        public static Task ThongBao(Window? cha, string tieuDe, string noiDung)
+        // =========================================================
+        // THÔNG BÁO - CHỈ CÓ OK
+        // =========================================================
+
+        public static Task ThongBao(
+            Window? cha,
+            string tieuDe,
+            string noiDung)
         {
-            var cuaSo = new ThongBaoWindow(tieuDe, noiDung, coHaiNut: false);
-            return cha != null ? cuaSo.ShowDialog(cha) : ShowKhongCha(cuaSo);
+            var cuaSo = new ThongBaoWindow(
+                tieuDe,
+                noiDung,
+                coHaiNut: false
+            );
+
+            return cha != null
+                ? cuaSo.ShowDialog(cha)
+                : ShowKhongCha(cuaSo);
         }
 
-        /// <summary>Hỏi xác nhận Có / Không, trả về true nếu người dùng chọn "Có".</summary>
-        public static async Task<bool> XacNhan(Window? cha, string tieuDe, string noiDung)
+        // =========================================================
+        // XÁC NHẬN - CÓ KHÔNG / CÓ
+        // =========================================================
+
+        public static async Task<bool> XacNhan(
+            Window? cha,
+            string tieuDe,
+            string noiDung)
         {
-            var cuaSo = new ThongBaoWindow(tieuDe, noiDung, coHaiNut: true);
+            var cuaSo = new ThongBaoWindow(
+                tieuDe,
+                noiDung,
+                coHaiNut: true
+            );
+
             if (cha != null)
+            {
                 await cuaSo.ShowDialog(cha);
+            }
             else
+            {
                 await ShowKhongCha(cuaSo);
+            }
+
             return cuaSo._ketQua;
         }
 
-        private static Task ShowKhongCha(ThongBaoWindow cuaSo)
+        // =========================================================
+        // TRƯỜNG HỢP KHÔNG CÓ CỬA SỔ CHA
+        // =========================================================
+
+        private static Task ShowKhongCha(
+            ThongBaoWindow cuaSo)
         {
             var tcs = new TaskCompletionSource();
-            cuaSo.Closed += (s, e) => tcs.TrySetResult();
+
+            cuaSo.Closed += (_, _) =>
+            {
+                tcs.TrySetResult();
+            };
+
             cuaSo.Show();
+
             return tcs.Task;
         }
     }

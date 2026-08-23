@@ -495,7 +495,8 @@ namespace QuanLyKhachHang.Views
         /// </summary>
         private async void BtnThemKhach_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            var cuaSo = new KhachHangEditWindow(_data.TaoMaKhachHangMoi());
+            string sdtHienTai = _txtTimSdt.Text?.Trim() ?? "";
+            var cuaSo = new KhachHangEditWindow(_data.TaoMaKhachHangMoi(), sdtMacDinh: sdtHienTai);
             if (TopLevel.GetTopLevel(this) is Window parentWindow)
             {
                 await cuaSo.ShowDialog(parentWindow);
@@ -509,6 +510,7 @@ namespace QuanLyKhachHang.Views
             {
                 _data.ThemKhachHang(cuaSo.KetQua);
                 CapNhatThongKe();
+                _txtTimSdt.Text = cuaSo.KetQua.SoDienThoai;
                 _moTabAction?.Invoke(1, null); // Chuyển sang Tab Khách hàng (Index 1)
             }
         }
